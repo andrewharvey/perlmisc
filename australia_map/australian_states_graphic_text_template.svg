@@ -104,5 +104,85 @@
        style="fill:`act_fill`;fill-opacity:`act_fill_opacity`;stroke:#000000;stroke-width:`template_stroke_width`;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:none"
        d="m 623.54451,536.54695 c -0.6829,-0.0985 -0.88388,-0.36329 -0.88388,-1.16467 0,-0.63136 -0.1042,-0.83892 -0.7213,-1.43676 l -0.72129,-0.69879 0.0584,-2.1385 c 0.0333,-1.21829 0.14335,-2.2452 0.25584,-2.38648 0.34858,-0.43777 0.96549,-2.3122 0.8651,-2.6285 -0.0792,-0.24955 0.34934,-0.50664 2.32447,-1.39446 l 2.42158,-1.08849 0.45445,0.39501 c 1.71686,1.49229 1.7931,1.59414 1.51318,2.02134 -0.14477,0.22096 -0.26322,0.52235 -0.26322,0.66976 0,0.14741 -0.19534,0.31704 -0.43408,0.37696 -0.49661,0.12464 -1.33243,1.13141 -1.33626,1.60957 -0.003,0.34335 -0.4358,1.67517 -0.71327,2.19362 -0.0924,0.17256 -0.38643,0.33892 -0.65351,0.36969 -0.75476,0.087 -1.08651,0.95828 -1.0982,2.88437 -0.0112,1.85147 -0.30925,2.52573 -1.06799,2.41633 z"
        id="act" />
+    <text
+       xml:space="preserve"
+       style="font-size:`text_size`;font-style:normal;font-weight:normal;text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="179.4595"
+       y="347.40594"
+       id="wa_text"><tspan
+         sodipodi:role="line"
+         x="179.4595"
+         y="347.40594"
+         id="tspan2825">`wa_text`</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:`text_size`;font-style:normal;font-weight:normal;text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="376.60236"
+       y="233.12024"
+       id="nt_text"><tspan
+         sodipodi:role="line"
+         id="tspan2831"
+         x="376.60236"
+         y="233.12024">`nt_text`</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:`text_size`;font-style:normal;font-weight:normal;text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="400.88806"
+       y="401.69168"
+       id="sa_text"><tspan
+         sodipodi:role="line"
+         id="tspan2835"
+         x="400.88806"
+         y="401.69168">`sa_text`</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:`text_size`;font-style:normal;font-weight:normal;text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="573.74524"
+       y="298.83453"
+       id="qld_text"><tspan
+         sodipodi:role="line"
+         id="tspan2839"
+         x="573.74524"
+         y="298.83453">`qld_text`</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:`text_size`;font-style:normal;font-weight:normal;text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="598.03094"
+       y="477.40594"
+       id="nsw_text"><tspan
+         sodipodi:role="line"
+         id="tspan2843"
+         x="598.03094"
+         y="477.40594">`nsw_text`</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:`text_size`;font-style:normal;font-weight:normal;text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="549.45953"
+       y="565.97742"
+       id="vic_text"><tspan
+         sodipodi:role="line"
+         id="tspan2847"
+         x="549.45953"
+         y="565.97742">`vic_text`</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:`text_size`;font-style:normal;font-weight:normal;text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="498.03091"
+       y="667.40601"
+       id="tas_text"><tspan
+         sodipodi:role="line"
+         id="tspan2851"
+         x="498.03091"
+         y="667.40601">`tas_text`</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:`text_size`;font-style:normal;font-weight:normal;text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="679.45947"
+       y="560.26306"
+       id="act_text"><tspan
+         sodipodi:role="line"
+         id="tspan2855"
+         x="679.45947"
+         y="560.26306">`act_text`</tspan></text>
   </g>
 </svg>

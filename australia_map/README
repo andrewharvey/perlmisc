@@ -13,5 +13,5 @@ Currently the script is running live at
 http://cgi.cse.unsw.edu.au/~amha119/cgi-bin/graph_aus_states.cgi
 
 Here is an example of the usage,
-http://cgi.cse.unsw.edu.au/~amha119/cgi-bin/graph_aus_states.cgi?nsw_fill=33ee21&nsw_fill_opacity=0.75&stroke=1.5
+http://cgi.cse.unsw.edu.au/~amha119/cgi-bin/graph_aus_states.cgi?nsw_fill=33ee21&nsw_fill_opacity=0.75&strokeWidth=1.5&nsw_text=NSW&textSize=30
 
