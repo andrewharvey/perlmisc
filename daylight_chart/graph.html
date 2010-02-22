@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+<title>Daylight Chart</title>
+<script type="text/javascript"
+  src="js/dygraph-combined.js"></script>
+<link href="default.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<h1>Daylight Chart</h1>
+<p>Time Zone: Australia/Sydney<br />
+Location: -33.859972,151.211111 (Sydney)</p>
+<p class="italics">Select a region to zoom in, double click to zoom out.</p>
+<div id="labels" style="width:800px; height:100px;"></div>
+<div id="graphdiv"
+  style="width:800px; height:600px;"></div>
+
+<script type="text/javascript">
+  g = new Dygraph(
+    document.getElementById("graphdiv"),
+    "data.csv",
+    {
+      pixelsPerXLabel: 30, //anything <30, requires either a large graph width, or really tiny text
+      pixelsPerYLabel: 15,
+      axisLabelFontSize: 10,
+      labelsSeparateLines: true,
+      labelsDiv: document.getElementById("labels")
+    }
+  );
+</script>
+<p>Graph produced with <a href="http://danvk.org/dygraphs/">dygraphs</a><br />
+Sunrise and Sunset times calculated using <a href="http://search.cpan.org/dist/DateTime-Event-Sunrise/">DateTime::Event::Sunrise</a><br />
+<a href="http://github.com/andrewharvey/perlmisc/tree/master/daylight_chart/">Source code I wrote for this page.</a></p>
+</body>
+
+</html>
