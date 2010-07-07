@@ -1,0 +1,16 @@
+These scripts can be used to log all keypresses under linux, and produce some
+statistics based on the data.
+
+You may need to change the /dev/input/ device in keylogger.pl for your system.
+
+To log key presses run keylogger.pl as root (or some other user with permission
+to read the /dev/input device set in keylogger.pl),
+
+    sudo ./keylogger.pl
+
+This will create a logfile. Then run
+
+    ./print_stats.pl logfile.log
+
+to get a summary of the data. You may need to change the keycode mappings in
+print_stats.pl for your keyboard.
