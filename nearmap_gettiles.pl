@@ -1,12 +1,14 @@
 #!/usr/bin/perl -w
 
-#This script does mass downloading of map tiles served in an openstreetmap style.
-#You'll need to change the source to change the paramaters of the download,
-#so its not meant to be an off the shelf solution.
-#Dependencies: You need wget installed.
-#              Only tested on linux.
+# Info: NearMap.com mass tile downloader
+# Author: Andrew Harvey (http://andrewharvey4.wordpress.com/)
+#
+# To the extent possible under law, the person who associated CC0
+# with this work has waived all copyright and related or neighboring
+# rights to this work.
+# http://creativecommons.org/publicdomain/zero/1.0/
 
-#This code is in the public domain.
+#This script does mass downloading of map tiles served in an openstreetmap style.
 
 #At the time of writting the imagery this code is designed to download is 
 #governed by the licence terms at 
@@ -25,46 +27,125 @@
 #when you’re thinking of downloading a large amount of data. 
 #http://www.nearmap.com/help/faq.aspx#download-lots-of-tiles
 
+#get params from args
+if (@ARGV < 7) {
+  print "Usage: ${0} nml left bottom right top minzoom maxzoom [date]\n";
+  print "       nml = {Dem,Vert,S,W,N,E}\n";
+  print "       date in form YYYYMMDD or blank for latest\n";
+  exit;
+}
+
+#NearMap Layer
+my $nml = shift @ARGV;
+my $left = shift @ARGV;
+my $bottom = shift @ARGV;
+my $right = shift @ARGV;
+my $top = shift @ARGV;
+
+my $minzoom = shift @ARGV;
+my $maxzoom = shift @ARGV;
+
+my @bbox = ($left, $bottom, $right, $top);
+my @zrange = ($minzoom, $maxzoom);
+
+my $date = shift @ARGV;
+
+#set up LWP, with connection caching and a cookie jar
+use LWP::UserAgent;
+my $ua = LWP::UserAgent->new;
+$ua->agent("TileDownloader ");
+
+use LWP::ConnCache;
+my $cache = $ua->conn_cache(LWP::ConnCache->new());
+$ua->conn_cache->total_capacity(15);
+
+use HTTP::Cookies;
+$ua->cookie_jar(HTTP::Cookies->new);
+
 sub getTileYNumber;
 sub getTileXNumber;
 
-my $cookie_num = time;
+#get the session cookie
+my $cookie_req = HTTP::Request->new(GET => 'http://www.nearmap.com/maps/nmq=getsession');
+my $cookie_res = $ua->request($cookie_req);
 
-#get the session cookie (not required, but they ask for client applications to do this)
-`wget --quiet --save-cookies cookiefile$cookie_num -O /dev/null "http://www.nearmap.com/maps/nmq=getsession"`;
+if (!$cookie_res->is_success) {
+  die "Unable te getsession cookie, ".$cookie_res->status_line."\n";
+}
 
-my $nml="Vert"; #Dem, Vert, S, W, N, E,
-my @bbox = (150, -35, 151.6, -33);
-my @zrange = (1, 17);
-my $wgetcmd = "wget --quiet --load-cookies cookiefile$cookie_num --tries=3 --timeout=30 --waitretry=30";
+my $base = "nearmap/$nml/";
 
-my $base = "nearmap/$nml/date";
+if (!defined $date) {
+  $base .= "latest";
+  $date = "";
+}else{
+  $base .= $date;
+  $date = "nmd=$date&";
+}
 
 my $middleX = getTileXNumber(($bbox[0]+$bbox[2])/2,$zrange[1]);
 my $middleY = getTileYNumber(($bbox[1]+$bbox[3])/2,$zrange[1]);
 my $middleZ = $zrange[1];
 
 `mkdir -p "$base"`;
-`$wgetcmd -O "$base/info.xml" "http://www.nearmap.com/maps/nml=$nml&x=$middleX&y=$middleY&z="$middleZ&nmq=info&nmf=xml`;
 
+my ($requests_current, $requests_limit);
+my ($kb_current, $kb_limit);
+
+print "Getting z ".$zrange[0]." to ".$zrange[1]."\n";
+my $requests = 0;
 foreach my $z ($zrange[0]..$zrange[1]) {
-  print "$z: ";
-  foreach my $x (getTileXNumber($bbox[0],$z)..getTileXNumber($bbox[2],$z)) {
-    print ".";
-    foreach my $y (getTileYNumber($bbox[3],$z)..getTileYNumber($bbox[1],$z)) {
+  my $xmin = getTileXNumber($bbox[0],$z);
+  my $xmax = getTileXNumber($bbox[2],$z);
+  my $ymin = getTileYNumber($bbox[3],$z);
+  my $ymax = getTileYNumber($bbox[1],$z);
+  print "   Getting x ".$xmin." to ".$xmax."\n";
+  print "   Getting y ".$ymin." to ".$ymax."\n";
+  my $numxs = abs($xmax - $xmin)+1;
+  my $numys = abs($ymin - $ymax)+1;
+
+  print "$z:";
+  foreach my $x ($xmin..$xmax) { #east to west
+    printf ("%.1f", (abs($xmin - $x)*100/$numxs));
+    print "\% ";
+    foreach my $y ($ymin..$ymax) {
       `mkdir -p "$base/$z/$x/"`; #wget needs the directories to exist
       if (!( -e "$base/$z/$x/$y.jpg" )) { #if the file is already there (helps if we cancel, and then want to pick up where we left off)
-        `$wgetcmd -O "$base/$z/$x/$y.jpg" "http://www.nearmap.com/maps/nml=$nml&x=$x&y=$y&z=$z"`;
-        if (-z "$base/$z/$x/$y.jpg") {
-          `rm "$base/$z/$x/$y.jpg"`; #the file is empty, so no point keeping it
+        my $res = $ua->request(HTTP::Request->new(GET => "http://www.nearmap.com/maps/nml=$nml&${date}x=$x&y=$y&z=$z"));
+        if ($res->is_success) {
+          open TILE, ">$base/$z/$x/$y.jpg";
+          print TILE $res->content;
+          close TILE;
         }
+        my $req_per_sec = $res->header("X-HyperWeb-RequestsPerSecond");
+        ($requests_current, $requests_limit) = split /\//, $req_per_sec;
+        if ($requests_current * 2 > $requests_limit) {
+          print STDERR "too many requests per sec, ", $req_per_sec, "\n";
+          sleep 10;
+        }
+        my $kb_per_sec = $res->header("X-HyperWeb-KbPerSecond");
+        ($kb_current, $kb_limit) = split /\//, $kb_per_sec;
+        if ($kb_current * 2 > $kb_limit) {
+          print STDERR "too many kb per sec, ", $kb_per_sec, "\n";
+          sleep 10;
+        }
+        print "req $req_per_sec, kb $kb_per_sec\n";
+        $requests++;
+        if ($requests > 150) {
+          print STDERR "sleeping...\n";
+          sleep 1;
+          $requests = 0;
+        }
+
+        #if (-z "$base/$z/$x/$y.jpg") {
+          #`rm "$base/$z/$x/$y.jpg"`; #the file is empty, so no point keeping it
+          #or we can keep it here so we don't ask again next time
+        #}
       } #else the file is already there
     }
   }
   print "\n";
 }
-
-`rm cookiefile$cookie_num`;
 
 #to convert from WGS to coordinates used for the tiles...
 use Math::Trig;
