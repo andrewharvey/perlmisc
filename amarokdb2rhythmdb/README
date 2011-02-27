@@ -1,0 +1,5 @@
+I wrote these scripts to help me get my Amarok 1.4 PostgreSQL database into Rhythmbox.
+
+It is not designed to be bug free, and you may need to tweek it for your needs.
+
+To use first run the amarok-pg-extract.sql script on your Amarok Postgres database, then run csv2rhythmboxdb.pl
