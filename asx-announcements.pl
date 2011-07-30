@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl -wT
 
 # Info: When called will collect collect ASX announcements for the given company
 #       code, and returns results in an RSS format.
@@ -17,6 +17,7 @@
 
 use strict;
 
+# apt-get install libwww-perl libhtml-tree-perl libxml-rss-perl libtimedate-perl
 use LWP::Simple;        #to fetch the HTML page
 use HTML::TreeBuilder;  #to parse the HTML page
 use XML::RSS;			#to generate the RSS file
@@ -28,8 +29,11 @@ my $q = new CGI();
 #get code from CGI query and check it matches the expected format
 my $asx_code = $q->param('code');
 $asx_code = uc($asx_code);
-if ($asx_code !~ /^[A-Z]+$/) { #should this always be 3 a-z chars?
-    exit;
+if ($asx_code !~ /^[A-Z]{3}$/) { #should this always be 3 a-z chars?
+    print $q->header(-status=>'400'),
+          $q->start_html('400 Bad request'),
+          $q->h2('You must supply a code paramater of exactly three A-Z characters.');
+    exit 0;
 }
 
 #or we can just get it from the program arguments
