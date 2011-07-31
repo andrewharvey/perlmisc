@@ -1,9 +1,9 @@
 #!/usr/bin/perl -wT
 
-# Info: When called will collect collect ASX announcements for the given company
-#       code, and returns results in an RSS format.
+# Info: When called will collect ASX announcements for the given company
+#       code, returning results in an RSS feed.
 # Author: Andrew Harvey (http://andrewharvey4.wordpress.com/)
-# Date: 10 Sep 2010 
+# Date: 31 Jul 2011
 #
 # To the extent possible under law, the person who associated CC0
 # with this work has waived all copyright and related or neighboring
@@ -13,14 +13,14 @@
 # Designed to be run as a CGI script, code for running from command line is
 # commented out.
 
-# When run from CGI the paramater should be code=XXX where XXX is the ASX code.
+# When run from CGI the paramater must be code=XXX where XXX is the ASX code.
 
 use strict;
 
 # apt-get install libwww-perl libhtml-tree-perl libxml-rss-perl libtimedate-perl
 use LWP::Simple;        #to fetch the HTML page
 use HTML::TreeBuilder;  #to parse the HTML page
-use XML::RSS;			#to generate the RSS file
+use XML::RSS;           #to generate the RSS file
 use Date::Format;       #to format datetimes
 
 use CGI;
@@ -45,7 +45,10 @@ my $page_url = "$asx_domain/asx/statistics/announcements.do?by=asxCode&asxCode="
 #get the HTML page from the ASX site
 my $html = get($page_url);
 if ($html eq '') {
-    exit;
+    print $q->header(-status=>'404'),
+          $q->start_html('404 Not found'),
+          $q->h2('ASX code '.$asx_code.' not found.');
+    exit 0;
 }
 
 # Create the RSS object.
@@ -55,17 +58,17 @@ my $feed_title = "ASX Announcements for ".$asx_code;
 
 # Prep the RSS.
 $rss->channel(
-	title        	=> $feed_title,
-	link         	=> $page_url,
-	language     	=> 'en',
-	lastBulidDate	=> time2str("%a, %d %b %Y %T GMT", time),
-	);
+    title         => $feed_title,
+    link          => $page_url,
+    language      => 'en',
+    lastBulidDate => time2str("%a, %d %b %Y %T GMT", time),
+    );
 
 $rss->image(
-	title	=> $feed_title,
-	url		=> "$asx_domain/images/asx_header_logo.jpg",
-	link	=> $page_url
-	);
+    title => $feed_title,
+    url   => "$asx_domain/images/asx_header_logo.jpg",
+    link  => $page_url
+    );
 
 
 #parse the HTML of the index page
@@ -85,13 +88,13 @@ my $index = 1;
 foreach my $row (@rows) {
     if (defined $row) {
         my ($date, $price_sen, $headline, $pages, $pdf, $txt) = $row->look_down('_tag', 'td');
-        
+
         $headline = $headline->as_text();
         $headline =~ s/ *$//; #remove trailing whitespace
 
         $date = $date->as_text();
         $pages = $pages->as_text();
-        
+
         my $pdf_link;
         #if no PDF link, try to use TXT link instead
         if (!defined $pdf->look_down('_tag', 'a')) {
@@ -100,7 +103,7 @@ foreach my $row (@rows) {
             }else{
                 $pdf_link = $asx_domain.$txt->look_down('_tag', 'a')->attr('href');
             }
-        }else {
+        }else{
             $pdf_link = $asx_domain.$pdf->look_down('_tag', 'a')->attr('href');
         }
 
@@ -109,12 +112,12 @@ foreach my $row (@rows) {
         }else{
             $price_sen = "";
         }
-        
+
         $rss->add_item( 
-			title 		=> $headline,
-			permaLink 	=> $pdf_link,
-			enclosure	=> { url=>$pdf_link, type=>"application/pdf"},
-			description 	=> "<![CDATA[$date$price_sen - $pages pages.]]>");
+            title       => $headline,
+            permaLink   => $pdf_link,
+            enclosure   => { url=>$pdf_link, type=>"application/pdf"},
+            description => "<![CDATA[$date$price_sen - $pages pages.]]>");
     }
 }
 
